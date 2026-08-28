@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,15 +30,28 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException("Get Error: Task not found"));
     }
 
-    public void create(TaskRequestDTO taskDto){
+    public TaskResponseDTO create(TaskRequestDTO taskDto){
         Task task = new Task();
 
         task.setId(nextid++);
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
         task.setCompleted(false);
+        task.setCreateAt(ZonedDateTime.now());
 
-        tasks.add(task);
+        boolean r = tasks.add(task);
+
+        TaskResponseDTO taskResposeDto = new TaskResponseDTO();
+
+        if(r){
+            taskResposeDto.setMsg("Tarefa concluída");
+            taskResposeDto.setCreateAt(task.getCreateAt());
+
+            return taskResposeDto;
+        }
+
+        taskResposeDto.setMsg("Houve algum erro");
+        return taskResposeDto;
     }
 
 

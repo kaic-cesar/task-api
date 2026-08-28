@@ -30,8 +30,8 @@ public class TaskController {
     }
 
     @PostMapping
-    public void createTask(@RequestBody TaskRequestDTO taskDto){
-        taskService.create(taskDto);
+    public TaskResponseDTO createTask(@RequestBody TaskRequestDTO taskDto){
+        return taskService.create(taskDto);
     }
 
     @PutMapping("/{id}")
