@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -30,6 +31,13 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException("Get Error: Task not found"));
     }
 
+    public List<Task> getTasks(@RequestParam Boolean completed){
+
+        return tasks.stream()
+                .filter(task -> task.getCompleted() == completed)
+                .toList();
+    }
+
     public TaskResponseDTO create(TaskRequestDTO taskDto){
         Task task = new Task();
 
@@ -44,7 +52,7 @@ public class TaskService {
         TaskResponseDTO taskResposeDto = new TaskResponseDTO();
 
         if(r){
-            taskResposeDto.setMsg("Tarefa concluída");
+            taskResposeDto.setMsg("Tarefa inserida");
             taskResposeDto.setCreateAt(task.getCreateAt());
 
             return taskResposeDto;

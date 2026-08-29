@@ -20,8 +20,13 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> allTasks(){
-        return taskService.allTasks();
+    public List<Task> allTasks(@RequestParam (required = false) Boolean completed){
+
+        if(completed == null){
+            return taskService.allTasks();
+        }
+
+        return taskService.getTasks(completed);
     }
 
     @GetMapping("/{id}")
