@@ -4,6 +4,7 @@ import com.kaiccesar.task_api.dto.TaskRequestDTO;
 import com.kaiccesar.task_api.dto.TaskResponseDTO;
 import com.kaiccesar.task_api.exception.TaskNotFoundException;
 import com.kaiccesar.task_api.model.Task;
+import com.kaiccesar.task_api.model.TaskStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class TaskService {
     public List<Task> getTasks(@RequestParam Boolean completed){
 
         return tasks.stream()
-                .filter(task -> task.getCompleted() == completed)
+                .filter(task -> task.getCompleted() == TaskStatus.COMPLETED)
                 .toList();
     }
 
@@ -44,7 +45,7 @@ public class TaskService {
         task.setId(nextid++);
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
-        task.setCompleted(false);
+        task.setCompleted(TaskStatus.PENDING);
         task.setCreateAt(ZonedDateTime.now());
 
         boolean r = tasks.add(task);
@@ -87,7 +88,7 @@ public class TaskService {
     public String completedTask(Long id){
         for(Task task : tasks){
             if(task.getId().equals(id)){
-                task.setCompleted(true);
+                task.setCompleted(TaskStatus.COMPLETED);
 
                 return "Tarefa concluida";
             }
