@@ -28,19 +28,13 @@ public class TaskService {
         return repository.findAll();
     }
 
-//    public Task taskById(Long id){
-//        return tasks.stream()
-//                .filter(task -> task.getId().equals(id))
-//                .findFirst()
-//                .orElseThrow(() -> new TaskNotFoundException("Get Error: Task not found"));
-//    }
-//
-//    public List<Task> getTasks(@RequestParam Boolean completed){
-//
-//        return tasks.stream()
-//                .filter(task -> task.getCompleted() == TaskStatus.COMPLETED)
-//                .toList();
-//    }
+    public Task taskById(Long id){
+        Task task = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task não encontrada"));
+
+        return task;
+    }
+
 
     public TaskResponseDTO create(TaskRequestDTO taskDto){
         Task task = new Task();
@@ -61,27 +55,25 @@ public class TaskService {
         );
     }
 
-//    public Task update(Long id, TaskRequestDTO newTask){
-//        for(Task task : tasks){
-//            if(task.getId().equals(id)){
-//                task.setTitle(newTask.getTitle());
-//                task.setDescription(newTask.getDescription());
-//            }
-//            return task;
-//        }
-//
-//        return null;
-//    }
-//
-//    public void delete(Long id){
-//        boolean response = tasks.removeIf(task -> task.getId().equals(id));
-//
-//        if(!response){
-//            throw new TaskNotFoundException("Delete Error: Task not found");
-//        }
-//
-//    }
-//
+    public Task update(Long id, TaskRequestDTO newTask){
+        Task task = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task não encontrada"));
+
+        task.setTitle(newTask.getTitle());
+        task.setDescription(newTask.getDescription());
+
+        Task updatedTask = repository.save(task);
+
+        return updatedTask;
+    }
+
+    public void delete(Long id){
+        Task task = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task não encontrada"));
+
+        repository.delete(task);
+    }
+
     public void completedTask(Long id){
         Task task = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tarefa não encontrada!"));
