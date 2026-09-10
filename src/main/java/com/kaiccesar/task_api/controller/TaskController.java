@@ -4,7 +4,9 @@ package com.kaiccesar.task_api.controller;
 import com.kaiccesar.task_api.dto.TaskRequestDTO;
 import com.kaiccesar.task_api.dto.TaskResponseDTO;
 import com.kaiccesar.task_api.model.Task;
+import com.kaiccesar.task_api.model.TaskStatus;
 import com.kaiccesar.task_api.service.TaskService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,20 +15,14 @@ import java.util.List;
 @RequestMapping("/v1/tasks")
 public class TaskController {
 
-    private final TaskService taskService;
+    @Autowired
+    TaskService taskService;
 
-    public TaskController(TaskService taskService){
-        this.taskService = taskService;
-    }
 
     @GetMapping
-    public List<Task> allTasks(@RequestParam (required = false) Boolean completed){
+    public List<Task> allTasks(){
 
-        if(completed == null){
-            return taskService.allTasks();
-        }
-
-        return taskService.getTasks(completed);
+        return taskService.allTasks();
     }
 
     @GetMapping("/{id}")
@@ -50,8 +46,8 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}")
-    public String completedTask(@PathVariable Long id){
-        return taskService.completedTask(id);
+    public void completedTask(@PathVariable Long id){
+        taskService.completedTask(id);
     }
 
 }
