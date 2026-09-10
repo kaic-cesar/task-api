@@ -46,8 +46,8 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}")
-    public void completedTask(@PathVariable Long id){
-        taskService.completedTask(id);
+    public TaskResponseDTO completedTask(@PathVariable Long id){
+        return taskService.completedTask(id);
     }
 
 }
