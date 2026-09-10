@@ -2,20 +2,17 @@ package com.kaiccesar.task_api.service;
 
 import com.kaiccesar.task_api.dto.TaskRequestDTO;
 import com.kaiccesar.task_api.dto.TaskResponseDTO;
-import com.kaiccesar.task_api.exception.TaskNotFoundException;
+
 import com.kaiccesar.task_api.model.Task;
 import com.kaiccesar.task_api.model.TaskStatus;
 import com.kaiccesar.task_api.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -25,7 +22,7 @@ public class TaskService {
     TaskRepository repository;
 
     public List<Task> allTasks(){
-        return repository.findAll();
+        return repository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public Task taskById(Long id){
@@ -74,12 +71,26 @@ public class TaskService {
         repository.delete(task);
     }
 
-    public void completedTask(Long id){
+    public TaskResponseDTO completedTask(Long id){
         Task task = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tarefa não encontrada!"));
 
-        task.setCompleted(TaskStatus.COMPLETED);
-        repository.save(task);
+
+        if(task.getCompleted().equals(TaskStatus.COMPLETED)){
+            task.setCompleted(TaskStatus.PENDING);
+            repository.save(task);
+        } else {
+            task.setCompleted(TaskStatus.COMPLETED);
+            repository.save(task);
+        }
+
+        return new TaskResponseDTO(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getCompleted(),
+                task.getCreateAt()
+        );
     }
 
 }
